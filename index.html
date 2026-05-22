@@ -1,0 +1,1054 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Autooutbound — 영업 자동화 시스템 · Service Introduction</title>
+<meta name="description" content="AI 기반 이메일 요약 · 영업/고객 관리 · 자동 리포트. Web + Android 앱으로 영업의 모든 흐름을 자동화합니다." />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Noto+Sans+KR:wght@300;400;500;700;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<!-- Material Symbols Rounded — same icon set the Flutter app uses (Icons.*_rounded / _outlined) -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Rounded:opsz,wght,FILL,GRAD@20..48,300..700,0..1,-25..200&display=block" />
+
+<style>
+  /* ── Design Tokens (mirrors src/templates/includes/web_light_theme.html) ───────── */
+  :root {
+    --web-bg: #EDF0F4;
+    --web-bg-soft: #F6F7FA;
+    --web-surface: rgba(255,255,255,0.72);
+    --web-surface-soft: rgba(255,255,255,0.48);
+    --web-surface-solid: #FFFFFF;
+    --web-surface-2: #F6F4EE;
+    --web-border: rgba(15,16,20,0.07);
+    --web-border-strong: rgba(15,16,20,0.12);
+    --web-text: #1A1A1F;
+    --web-text-2: #52555E;
+    --web-text-3: #85878F;
+    --web-text-4: #C2C4CB;
+    --web-accent: #4F46E5;
+    --web-accent-2: #6366F1;
+    --web-accent-soft: rgba(79,70,229,0.10);
+    --web-green: #0E9F6E;
+    --web-red: #DC2626;
+    --web-blue: #2563EB;
+    --web-shadow: 0 1px 1px rgba(15,16,20,0.02), 0 14px 34px -20px rgba(15,16,20,0.24);
+    --web-shadow-strong: 0 2px 4px rgba(15,16,20,0.04), 0 24px 60px -26px rgba(15,16,20,0.30);
+    --web-font: "Outfit", "Noto Sans KR", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    --mono: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* dark section tokens */
+    --d-bg: #0A0A0A;
+    --d-bg-2: #0F1320;
+    --d-surface: rgba(255,255,255,0.04);
+    --d-surface-2: rgba(255,255,255,0.06);
+    --d-border: rgba(255,255,255,0.08);
+    --d-border-strong: rgba(255,255,255,0.14);
+    --d-text: #F1F5F9;
+    --d-text-2: #94A3B8;
+    --d-text-3: #64748B;
+    --d-accent: #818CF8;
+    --d-accent-2: #6366F1;
+    --d-accent-soft: rgba(99,102,241,0.16);
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    margin: 0;
+    font-family: var(--web-font);
+    font-weight: 400;
+    color: var(--web-text);
+    background:
+      radial-gradient(60% 46% at 52% 0%, rgba(79,70,229,0.055), transparent 62%),
+      linear-gradient(180deg, #EDF0F4 0%, #F4F6FA 100%);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+    letter-spacing: -0.01em;
+  }
+  ::selection { background: rgba(79,70,229,0.18); color: var(--web-text); }
+  img { max-width: 100%; display: block; }
+  a { color: inherit; text-decoration: none; }
+  ul { margin: 0; padding: 0; list-style: none; }
+
+  /* ── Layout primitives ─────────────────────────────────────────────────────────── */
+  .wrap { max-width: 1180px; margin: 0 auto; padding: 0 28px; }
+  .section { padding: 120px 0; position: relative; overflow: hidden; }
+  .section--tight { padding: 88px 0; }
+  .section--dark {
+    background: radial-gradient(80% 60% at 50% 0%, rgba(99,102,241,0.18), transparent 60%), var(--d-bg);
+    color: var(--d-text);
+  }
+  .section--dark .muted { color: var(--d-text-2); }
+
+  .kicker {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-family: var(--mono); font-size: 11px; font-weight: 500;
+    letter-spacing: 0.18em; text-transform: uppercase;
+    color: var(--web-accent);
+    padding: 6px 12px; border-radius: 999px;
+    background: var(--web-accent-soft);
+    border: 1px solid rgba(79,70,229,0.18);
+  }
+  .section--dark .kicker {
+    color: var(--d-accent);
+    background: var(--d-accent-soft);
+    border-color: rgba(129,140,248,0.28);
+  }
+  .kicker .dot { width: 5px; height: 5px; border-radius: 999px; background: currentColor; }
+
+  .h1 { font-size: clamp(40px, 6vw, 68px); font-weight: 700; line-height: 1.05; letter-spacing: -0.04em; margin: 0; }
+  .h2 { font-size: clamp(32px, 4vw, 46px); font-weight: 600; line-height: 1.1; letter-spacing: -0.035em; margin: 0 0 18px; }
+  .h3 { font-size: 22px; font-weight: 600; line-height: 1.25; letter-spacing: -0.02em; margin: 0 0 8px; }
+  .lead { font-size: 19px; line-height: 1.6; color: var(--web-text-2); margin: 18px 0 0; max-width: 640px; }
+  .section--dark .lead { color: var(--d-text-2); }
+  .muted { color: var(--web-text-2); }
+  .small { font-size: 13px; color: var(--web-text-3); }
+
+  .grid { display: grid; gap: 24px; }
+
+  /* ── Top nav ───────────────────────────────────────────────────────────────────── */
+  .nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(13,16,28,0.62);
+    backdrop-filter: blur(18px) saturate(160%);
+    -webkit-backdrop-filter: blur(18px) saturate(160%);
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .nav-inner {
+    max-width: 1180px; margin: 0 auto; padding: 14px 28px;
+    display: flex; align-items: center; justify-content: space-between;
+    color: #fff;
+  }
+  .brand { display: inline-flex; align-items: center; gap: 12px; }
+  .brand img { width: 32px; height: 32px; }
+  .brand .word { font-weight: 600; font-size: 19px; letter-spacing: -0.025em; line-height: 1; }
+  .brand .word .accent { color: var(--d-accent); }
+  .brand .tagline { display: block; font-family: var(--mono); font-size: 10px; color: #94A3B8; margin-top: 4px; letter-spacing: -0.02em; }
+  .nav-links { display: flex; gap: 28px; font-size: 14px; color: rgba(255,255,255,0.72); }
+  .nav-links a:hover { color: #fff; }
+  .nav-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 9px 16px; border-radius: 10px;
+    background: linear-gradient(180deg, #6366F1 0%, #4F46E5 100%);
+    color: #fff; font-weight: 500; font-size: 14px;
+    box-shadow: 0 8px 24px rgba(99,102,241,0.32);
+    transition: transform .15s ease;
+  }
+  .nav-cta:hover { transform: translateY(-1px); }
+  @media (max-width: 760px) { .nav-links { display: none; } }
+
+  /* ── Hero ──────────────────────────────────────────────────────────────────────── */
+  .hero {
+    padding: 80px 0 100px;
+    background:
+      radial-gradient(60% 70% at 50% 0%, rgba(99,102,241,0.30), transparent 60%),
+      radial-gradient(40% 50% at 80% 30%, rgba(79,70,229,0.16), transparent 60%),
+      linear-gradient(180deg, #0A0A0A 0%, #0E1226 100%);
+    color: var(--d-text);
+    position: relative; overflow: hidden;
+  }
+  .hero::before, .hero::after {
+    content: ""; position: absolute; border-radius: 50%;
+    background: radial-gradient(circle, rgba(129,140,248,0.30) 0%, transparent 70%);
+    pointer-events: none; filter: blur(40px);
+  }
+  .hero::before { width: 520px; height: 520px; left: -180px; top: -120px; }
+  .hero::after { width: 680px; height: 680px; right: -240px; top: 40px; opacity: 0.7; }
+  .hero-inner { position: relative; z-index: 1; text-align: center; }
+  .hero .h1 {
+    background: linear-gradient(180deg, #FFFFFF 0%, #C7CBF5 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+  }
+  .hero .h1 .accent { -webkit-text-fill-color: var(--d-accent); color: var(--d-accent); }
+  .hero .lead { color: rgba(255,255,255,0.72); margin: 22px auto 0; }
+  .hero-ctas { margin-top: 36px; display: inline-flex; gap: 12px; flex-wrap: wrap; justify-content: center; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 10px;
+    padding: 14px 22px; border-radius: 12px;
+    font-weight: 500; font-size: 15px;
+    transition: transform .15s ease, box-shadow .15s ease;
+  }
+  .btn--primary {
+    background: linear-gradient(180deg, #6366F1 0%, #4F46E5 100%);
+    color: #fff; box-shadow: 0 12px 32px rgba(99,102,241,0.36);
+  }
+  .btn--primary:hover { transform: translateY(-2px); box-shadow: 0 18px 40px rgba(99,102,241,0.44); }
+  .btn--ghost {
+    color: #fff; background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.16);
+  }
+  .btn--ghost:hover { background: rgba(255,255,255,0.08); }
+
+  .hero-meta {
+    margin-top: 30px;
+    display: inline-flex; gap: 24px; flex-wrap: wrap; justify-content: center;
+    font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,0.5);
+  }
+  .hero-meta .dot { color: var(--d-accent); }
+
+  .hero-shot {
+    margin: 72px auto 0; max-width: 1100px; position: relative;
+  }
+  .browser {
+    border-radius: 18px; overflow: hidden;
+    background: #0F1320;
+    border: 1px solid rgba(255,255,255,0.10);
+    box-shadow: 0 60px 140px -40px rgba(99,102,241,0.45), 0 30px 80px -30px rgba(0,0,0,0.6);
+  }
+  .browser-bar {
+    display: flex; align-items: center; gap: 8px;
+    padding: 12px 16px; background: #14182A;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .browser-bar .dots { display: flex; gap: 6px; }
+  .browser-bar .dots span { width: 12px; height: 12px; border-radius: 50%; }
+  .browser-bar .dots span:nth-child(1) { background: #FF5F57; }
+  .browser-bar .dots span:nth-child(2) { background: #FEBC2E; }
+  .browser-bar .dots span:nth-child(3) { background: #28C840; }
+  .browser-bar .url {
+    flex: 1; margin-left: 14px;
+    background: rgba(255,255,255,0.05);
+    padding: 6px 14px; border-radius: 8px;
+    font-family: var(--mono); font-size: 11.5px; color: rgba(255,255,255,0.56);
+    letter-spacing: -0.01em;
+  }
+  .browser-bar .url::before { content: "🔒  "; opacity: 0.5; }
+  .browser img { width: 100%; display: block; }
+
+  .hero-shot .float {
+    position: absolute; border-radius: 14px;
+    background: rgba(15,19,32,0.85);
+    border: 1px solid rgba(255,255,255,0.10);
+    padding: 14px 16px;
+    backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.6);
+    display: flex; align-items: center; gap: 12px;
+    font-size: 13px; color: #fff;
+  }
+  .hero-shot .float--tl { top: 14%; left: -14px; }
+  .hero-shot .float--br { bottom: 12%; right: -14px; }
+  .hero-shot .float .icon-wrap { width: 36px; height: 36px; border-radius: 9px; background: var(--d-accent-soft); display: grid; place-items: center; }
+  .hero-shot .float .icon-wrap img { width: 20px; height: 20px; }
+  .hero-shot .float strong { display: block; font-weight: 600; font-size: 14px; }
+  .hero-shot .float small { color: var(--d-text-2); font-size: 11.5px; }
+  @media (max-width: 900px) { .hero-shot .float { display: none; } }
+
+  /* ── Card / Icon primitives ────────────────────────────────────────────────────── */
+  .card {
+    background: var(--web-surface-solid);
+    border: 1px solid var(--web-border);
+    border-radius: 18px;
+    padding: 28px;
+    box-shadow: var(--web-shadow);
+    transition: border-color .2s, box-shadow .2s, transform .2s;
+  }
+  .card:hover {
+    border-color: var(--web-border-strong);
+    box-shadow: var(--web-shadow-strong);
+    transform: translateY(-2px);
+  }
+  .section--dark .card {
+    background: var(--d-surface);
+    border-color: var(--d-border);
+    box-shadow: none;
+    color: var(--d-text);
+  }
+  .section--dark .card:hover {
+    border-color: var(--d-border-strong);
+    background: var(--d-surface-2);
+  }
+
+  /* ── Material Symbols (Flutter app icon parity) ────────────────────────────────── */
+  .msi {
+    font-family: "Material Symbols Rounded";
+    font-weight: 400;
+    font-style: normal;
+    display: inline-block;
+    line-height: 1;
+    text-transform: none;
+    letter-spacing: normal;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: "liga";
+    -webkit-font-smoothing: antialiased;
+    font-feature-settings: "liga";
+    font-size: 24px; /* default; override per usage */
+    color: inherit;
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+    user-select: none;
+  }
+  .msi--fill { font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24; }
+  .msi--bold { font-variation-settings: 'FILL' 0, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+  .msi--bold.msi--fill { font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24; }
+
+  .icon-img { width: 48px; height: 48px; font-size: 48px; }
+  .icon-img--lg { width: 64px; height: 64px; font-size: 64px; }
+  .icon-img--sm { width: 32px; height: 32px; font-size: 32px; }
+
+  /* ── Section: Problem ──────────────────────────────────────────────────────────── */
+  .pain-grid { grid-template-columns: repeat(3, 1fr); margin-top: 56px; }
+  .pain-card .num {
+    font-family: var(--mono); font-size: 12px; color: var(--web-accent);
+    font-weight: 500;
+  }
+  .pain-card h3 { margin-top: 16px; }
+  .pain-card p { color: var(--web-text-2); font-size: 15px; line-height: 1.6; margin: 8px 0 0; }
+  .pain-card .icon-img { margin-bottom: 12px; }
+  @media (max-width: 860px) { .pain-grid { grid-template-columns: 1fr; } }
+
+  /* ── Section: Solution 2x2 ─────────────────────────────────────────────────────── */
+  .sol-grid { grid-template-columns: repeat(2, 1fr); margin-top: 56px; }
+  .sol-card .num-pill {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 26px; height: 26px; border-radius: 999px;
+    background: var(--d-accent-soft); color: var(--d-accent);
+    font-family: var(--mono); font-size: 12px; font-weight: 600;
+    margin-bottom: 16px;
+  }
+  .sol-card h3 { margin: 16px 0 8px; font-size: 20px; }
+  .sol-card p { color: var(--d-text-2); font-size: 15px; line-height: 1.6; margin: 0; }
+  .sol-card .feature-list { margin-top: 14px; display: flex; flex-direction: column; gap: 6px; }
+  .sol-card .feature-list li { font-size: 13px; color: var(--d-text-2); display: flex; gap: 8px; align-items: flex-start; }
+  .sol-card .feature-list li::before { content: ""; width: 4px; height: 4px; margin-top: 8px; border-radius: 50%; background: var(--d-accent); flex: 0 0 4px; }
+  @media (max-width: 860px) { .sol-grid { grid-template-columns: 1fr; } }
+
+  /* ── Section: Feature rows (alternating) ───────────────────────────────────────── */
+  .feature-row {
+    display: grid;
+    grid-template-columns: 1fr 1.1fr;
+    gap: 80px;
+    align-items: center;
+    margin-top: 56px;
+  }
+  .feature-row--reverse { grid-template-columns: 1.1fr 1fr; }
+  .feature-row--reverse .feature-copy { order: 2; }
+  .feature-row--reverse .feature-visual { order: 1; }
+  .feature-copy .h2 { margin-top: 18px; }
+  .feature-copy ul { margin: 28px 0 0; display: flex; flex-direction: column; gap: 14px; }
+  .feature-copy ul li {
+    display: flex; gap: 14px; align-items: flex-start;
+    font-size: 16px; line-height: 1.55; color: var(--web-text);
+  }
+  .section--dark .feature-copy ul li { color: var(--d-text); }
+  .feature-copy ul li img,
+  .feature-copy ul li .msi { flex: 0 0 24px; width: 24px; height: 24px; font-size: 22px; margin-top: 1px; }
+  .feature-copy ul li b { font-weight: 600; }
+  .feature-copy ul li .desc { display: block; color: var(--web-text-2); font-size: 14px; margin-top: 2px; }
+  .section--dark .feature-copy ul li .desc { color: var(--d-text-2); }
+  .section--dark .feature-copy ul li .msi { color: var(--d-accent) !important; }
+  @media (max-width: 900px) {
+    .feature-row, .feature-row--reverse { grid-template-columns: 1fr; gap: 40px; }
+    .feature-row--reverse .feature-copy { order: 1; }
+    .feature-row--reverse .feature-visual { order: 2; }
+  }
+
+  /* Web shot frame (lighter, for in-section use) */
+  .web-shot {
+    border-radius: 16px; overflow: hidden;
+    border: 1px solid var(--web-border-strong);
+    box-shadow: var(--web-shadow-strong);
+    background: #fff;
+  }
+  .web-shot--dark {
+    border-color: rgba(255,255,255,0.10);
+    box-shadow: 0 30px 80px -30px rgba(0,0,0,0.5);
+    background: #0F1320;
+  }
+  .web-shot .browser-bar { padding: 10px 14px; }
+  .web-shot--light .browser-bar { background: #F6F7FA; border-bottom: 1px solid var(--web-border); }
+  .web-shot--light .browser-bar .url { background: #fff; color: var(--web-text-3); }
+  .web-shot--light .browser-bar .url::before { color: var(--web-text-3); }
+
+  /* Phone frame */
+  .phone {
+    position: relative;
+    width: 280px; max-width: 100%;
+    border-radius: 36px;
+    background: #0A0A0A;
+    border: 1px solid rgba(255,255,255,0.10);
+    padding: 14px 12px;
+    box-shadow: 0 40px 100px -30px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset;
+  }
+  .phone::before {
+    content: ""; position: absolute; top: 18px; left: 50%; transform: translateX(-50%);
+    width: 90px; height: 22px; border-radius: 999px; background: #000; z-index: 2;
+  }
+  .phone img {
+    border-radius: 24px;
+    display: block; width: 100%;
+  }
+
+  /* ── Section: Mobile twin ──────────────────────────────────────────────────────── */
+  .mobile-stage {
+    margin-top: 64px;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr auto 1fr;
+    gap: 40px;
+    align-items: center;
+  }
+  .mobile-feats { display: flex; flex-direction: column; gap: 24px; }
+  .mobile-feat { display: flex; gap: 14px; align-items: flex-start; }
+  .mobile-feat .icon-wrap {
+    width: 44px; height: 44px; flex: 0 0 44px; border-radius: 11px;
+    background: var(--d-accent-soft); display: grid; place-items: center;
+  }
+  .mobile-feat .icon-wrap img { width: 22px; height: 22px; }
+  .mobile-feat h4 { margin: 0 0 6px; font-size: 16px; font-weight: 600; color: var(--d-text); }
+  .mobile-feat p { margin: 0; font-size: 14px; color: var(--d-text-2); line-height: 1.55; }
+  @media (max-width: 1024px) {
+    .mobile-stage { grid-template-columns: 1fr; }
+    .mobile-stage > * { justify-self: center; }
+  }
+
+  /* ── Section: Impact stats ─────────────────────────────────────────────────────── */
+  .impact-grid { grid-template-columns: repeat(3, 1fr); margin-top: 56px; }
+  .impact-card { text-align: center; padding: 36px 24px; }
+  .impact-card .stat {
+    font-size: 72px; font-weight: 700;
+    background: linear-gradient(180deg, #6366F1 0%, #4F46E5 100%);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent;
+    line-height: 1; letter-spacing: -0.04em; margin-bottom: 8px;
+    font-family: var(--web-font);
+  }
+  .impact-card .stat .unit { font-size: 32px; vertical-align: top; margin-left: 2px; font-weight: 500; }
+  .impact-card .label { font-size: 15px; color: var(--web-text-2); margin-top: 6px; }
+  .impact-quote {
+    margin-top: 56px; text-align: center;
+    font-size: 22px; color: var(--web-text); font-weight: 500;
+    line-height: 1.5; letter-spacing: -0.02em;
+  }
+  .impact-quote em { font-style: normal; color: var(--web-accent); }
+  @media (max-width: 760px) { .impact-grid { grid-template-columns: 1fr; } }
+
+  /* ── Section: Tech ─────────────────────────────────────────────────────────────── */
+  .tech-split { display: grid; grid-template-columns: 1.1fr 1fr; gap: 56px; margin-top: 56px; }
+  .badge-cloud { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 24px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px; border-radius: 999px;
+    background: var(--d-surface); border: 1px solid var(--d-border);
+    font-size: 13px; color: var(--d-text); font-family: var(--mono); font-weight: 500;
+  }
+  .badge .pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--d-accent); box-shadow: 0 0 0 4px rgba(129,140,248,0.16); }
+  .ops-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 24px; }
+  .ops-card { padding: 18px; border-radius: 14px; background: var(--d-surface); border: 1px solid var(--d-border); }
+  .ops-card .icon-img,
+  .ops-card .msi { display: block; margin-bottom: 10px; }
+  .ops-card h4 { margin: 0 0 4px; font-size: 14px; font-weight: 600; color: var(--d-text); }
+  .ops-card p { margin: 0; font-size: 12.5px; color: var(--d-text-2); line-height: 1.5; }
+  @media (max-width: 900px) { .tech-split { grid-template-columns: 1fr; } }
+
+  /* ── Section: CTA ──────────────────────────────────────────────────────────────── */
+  .cta {
+    padding: 100px 0 88px;
+    background:
+      radial-gradient(60% 90% at 50% 0%, rgba(99,102,241,0.32), transparent 60%),
+      linear-gradient(180deg, #0A0A0A 0%, #0E1226 100%);
+    color: var(--d-text); text-align: center;
+    position: relative; overflow: hidden;
+  }
+  .cta::before {
+    content: ""; position: absolute; inset: 0;
+    background: radial-gradient(40% 60% at 50% 100%, rgba(79,70,229,0.16), transparent 70%);
+    pointer-events: none;
+  }
+  .cta .h1 { font-size: clamp(36px, 5vw, 56px); }
+  .cta .lead { margin: 20px auto 0; color: rgba(255,255,255,0.72); }
+  .cta-cards {
+    margin-top: 48px;
+    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
+    max-width: 760px; margin-left: auto; margin-right: auto;
+  }
+  .cta-card {
+    padding: 24px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: 14px;
+    display: flex; gap: 14px; align-items: center; text-align: left;
+    transition: border-color .2s, background .2s;
+  }
+  .cta-card:hover { border-color: rgba(129,140,248,0.40); background: rgba(99,102,241,0.10); }
+  .cta-card .icon-wrap { width: 44px; height: 44px; flex: 0 0 44px; border-radius: 11px; background: var(--d-accent-soft); display: grid; place-items: center; }
+  .cta-card .icon-wrap img { width: 22px; height: 22px; }
+  .cta-card .label { display: block; font-size: 12px; color: var(--d-text-2); font-family: var(--mono); letter-spacing: 0.05em; text-transform: uppercase; }
+  .cta-card .value { display: block; font-size: 15px; color: var(--d-text); font-weight: 500; margin-top: 4px; word-break: break-all; }
+  @media (max-width: 640px) { .cta-cards { grid-template-columns: 1fr; } }
+
+  /* ── Footer ────────────────────────────────────────────────────────────────────── */
+  .foot {
+    padding: 32px 0;
+    background: #050608;
+    color: rgba(255,255,255,0.4);
+    font-size: 12px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+  }
+  .foot-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  .foot .brand { color: rgba(255,255,255,0.7); }
+  .foot .brand .word { font-size: 14px; }
+
+  /* ── Subtle entrance ───────────────────────────────────────────────────────────── */
+  .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
+  .reveal.is-in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+
+  /* ── Print (PDF export friendly) ───────────────────────────────────────────────── */
+  @page { margin: 0; }
+  @media print {
+    html, body { background: #050608 !important; }
+    .nav { display: none; }
+    .section { padding: 60px 0; page-break-inside: avoid; }
+    .foot { break-after: avoid; }
+    .reveal { opacity: 1 !important; transform: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- NAV                                                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="#top" class="brand">
+      <img src="icons/app-launcher-clean.png" alt="" style="background:#fff;border-radius:8px;" />
+      <div>
+        <div class="word">Aut<span class="accent">oo</span>utbound</div>
+        <span class="tagline">Outbound Mail · Suite</span>
+      </div>
+    </a>
+    <div class="nav-links">
+      <a href="#problem">문제</a>
+      <a href="#solution">솔루션</a>
+      <a href="#features">기능</a>
+      <a href="#mobile">모바일</a>
+      <a href="#impact">도입 효과</a>
+      <a href="#tech">기술</a>
+    </div>
+    <a class="nav-cta" href="#cta">
+      무료 체험 →
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- HERO                                                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<header class="hero" id="top">
+  <div class="wrap hero-inner">
+    <img src="icons/app-launcher-clean.png" alt="Autooutbound app icon"
+         style="width:96px;height:96px;border-radius:22px;margin:0 auto 28px;display:block;
+                background:#ffffff;
+                box-shadow:0 24px 60px -20px rgba(99,102,241,0.55), 0 0 0 1px rgba(255,255,255,0.06);" />
+    <div class="kicker"><span class="dot"></span>SERVICE INTRODUCTION · v1.7</div>
+    <h1 class="h1" style="margin-top:24px;">
+      영업의 모든 흐름을<br />
+      <span class="accent">AI가 자동으로</span> 처리합니다
+    </h1>
+    <p class="lead">
+      이메일 요약 · 영업/고객 관리 · 자동 리포트까지.<br />
+      Web과 Android 앱 한 곳에서 — 진짜 영업에만 집중하세요.
+    </p>
+    <div class="hero-ctas">
+      <a class="btn btn--primary" href="https://auto-outbound-mail-system.onrender.com" target="_blank" rel="noopener">
+        지금 시작하기 →
+      </a>
+      <a class="btn btn--ghost" href="#solution">기능 살펴보기</a>
+    </div>
+    <div class="hero-meta">
+      <span><span class="dot">●</span> 클라우드 24/7 운영</span>
+      <span><span class="dot">●</span> Web + Android</span>
+      <span><span class="dot">●</span> 멀티테넌트 보안</span>
+    </div>
+
+    <div class="hero-shot">
+      <div class="browser">
+        <div class="browser-bar">
+          <div class="dots"><span></span><span></span><span></span></div>
+          <div class="url">auto-outbound-mail-system.onrender.com</div>
+        </div>
+        <img src="screenshots_final/web_home.png" alt="홈 대시보드" />
+      </div>
+      <div class="float float--tl">
+        <div class="icon-wrap"><span class="msi msi--fill" style="font-size:20px;color:var(--d-accent);">auto_awesome</span></div>
+        <div>
+          <strong>AI 요약 완료</strong>
+          <small>오늘 이메일 24건 처리</small>
+        </div>
+      </div>
+      <div class="float float--br">
+        <div class="icon-wrap"><span class="msi msi--bold" style="font-size:20px;color:var(--d-accent);">trending_up</span></div>
+        <div>
+          <strong>이번 달 매출 +18%</strong>
+          <small>신규 고객 7명 추가</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- PROBLEM                                                                          -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="problem">
+  <div class="wrap">
+    <div class="reveal">
+      <span class="kicker"><span class="dot"></span>PROBLEM</span>
+      <h2 class="h2" style="margin-top:18px;">이런 문제, 겪고 계신가요?</h2>
+      <p class="lead">매일 반복되는 영업 업무가 진짜 영업할 시간을 빼앗고 있습니다.</p>
+    </div>
+
+    <div class="grid pain-grid">
+      <div class="card pain-card reveal">
+        <span class="msi icon-img" style="color:var(--web-accent);">mail</span>
+        <div class="num">01 — INBOX OVERLOAD</div>
+        <h3 class="h3">하루 수십 통의 이메일</h3>
+        <p>받은 메일을 확인하고 요약하는 데만 오전이 다 갑니다. 정작 답장을 보낼 시간은 부족하죠.</p>
+      </div>
+      <div class="card pain-card reveal">
+        <span class="msi icon-img" style="color:var(--web-accent);">contacts</span>
+        <div class="num">02 — SCATTERED DATA</div>
+        <h3 class="h3">여기저기 흩어진 고객 정보</h3>
+        <p>담당자 정보는 메모장, 회사 정보는 스프레드시트. 영업 현황을 한눈에 보기 어렵습니다.</p>
+      </div>
+      <div class="card pain-card reveal">
+        <span class="msi icon-img" style="color:var(--web-accent);">bar_chart</span>
+        <div class="num">03 — REPORT FATIGUE</div>
+        <h3 class="h3">리포트 작성에 반나절</h3>
+        <p>주간·월간 리포트를 매번 손으로 정리하다 보면, 정작 영업에 쓸 시간이 사라집니다.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- SOLUTION 2x2                                                                     -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<section class="section section--dark" id="solution">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center;">
+      <span class="kicker"><span class="dot"></span>SOLUTION</span>
+      <h2 class="h2" style="margin-top:18px;">영업 자동화 시스템이<br/>네 가지를 한 번에 해결합니다</h2>
+      <p class="lead muted" style="margin-left:auto;margin-right:auto;">
+        Gmail · Notion · Gemini AI를 한 화면에서 묶어, 반복 업무를 0으로 만듭니다.
+      </p>
+    </div>
+
+    <div class="grid sol-grid">
+      <div class="card sol-card reveal">
+        <div class="num-pill">01</div>
+        <span class="msi icon-img" style="color:var(--d-accent);">mail</span>
+        <h3>AI 이메일 요약</h3>
+        <p>Gmail을 연동하고, AI가 메일의 핵심만 뽑아 고객별로 저장합니다.</p>
+        <ul class="feature-list">
+          <li>수신·발신 자동 분류</li>
+          <li>Gemini AI 요약문 자동 생성</li>
+          <li>전화 통화 내용도 요약 지원</li>
+        </ul>
+      </div>
+      <div class="card sol-card reveal">
+        <div class="num-pill">02</div>
+        <span class="msi icon-img" style="color:var(--d-accent);">contacts</span>
+        <h3>영업·고객 관리 CRM</h3>
+        <p>담당자와 회사를 이중으로 관리하는 Notion 기반 통합 CRM.</p>
+        <ul class="feature-list">
+          <li>신규 / 진행중 / 성사 / 이탈 태그</li>
+          <li>Notion DB와 실시간 양방향 동기화</li>
+          <li>모바일에서도 동일하게 편집</li>
+        </ul>
+      </div>
+      <div class="card sol-card reveal">
+        <div class="num-pill">03</div>
+        <span class="msi icon-img" style="color:var(--d-accent);">fact_check</span>
+        <h3>스마트 Todo</h3>
+        <p>AI가 일별·주별 할 일을 우선순위대로 자동 정리합니다.</p>
+        <ul class="feature-list">
+          <li>홈 대시보드에서 한눈에 확인</li>
+          <li>AI 우선순위 추천</li>
+          <li>웹 ↔ 앱 실시간 동기화</li>
+        </ul>
+      </div>
+      <div class="card sol-card reveal">
+        <div class="num-pill">04</div>
+        <span class="msi icon-img" style="color:var(--d-accent);">bar_chart</span>
+        <h3>자동 리포트</h3>
+        <p>주간·월간 영업 리포트를 원클릭으로 생성, 메일·문서로 바로 전달.</p>
+        <ul class="feature-list">
+          <li>매출·신규·이탈 KPI 자동 집계</li>
+          <li>Gemini AI 코멘트 자동 작성</li>
+          <li>리포트 스튜디오에서 커스터마이즈</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- FEATURES                                                                         -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="features">
+  <div class="wrap">
+
+    <!-- Feature 1: AI 이메일 요약 (light) -->
+    <div class="feature-row">
+      <div class="feature-copy reveal">
+        <span class="kicker"><span class="dot"></span>FEATURE 01 · AI MAIL</span>
+        <h2 class="h2">AI가 이메일을 읽고,<br/>핵심만 전달합니다</h2>
+        <p class="lead">Gmail 받은편지함을 연동하기만 하면 — 이후의 분류, 요약, 저장은 AI가 알아서.</p>
+        <ul>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>Gmail 양방향 연동</b>
+              <span class="desc">수신·발신 메일을 고객별로 자동 분류해 한 곳에 모읍니다.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>Gemini AI 요약</b>
+              <span class="desc">긴 메일에서도 핵심만 3~5줄로 압축해 즉시 확인 가능.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>고객별 커뮤니케이션 이력</b>
+              <span class="desc">메일·전화 통화 요약이 회사 페이지 한 곳에 시간순으로 누적.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>전화 통화 요약 지원</b>
+              <span class="desc">녹음 파일을 업로드하면 AI가 자동으로 텍스트화 + 요약.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="feature-visual reveal">
+        <div class="phone" style="margin: 0 auto;">
+          <img src="screenshots_final/app_04_detail.png" alt="앱 상세 화면" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Feature 2: 영업 CRM (dark) -->
+<section class="section section--dark">
+  <div class="wrap">
+    <div class="feature-row feature-row--reverse">
+      <div class="feature-copy reveal">
+        <span class="kicker"><span class="dot"></span>FEATURE 02 · SALES CRM</span>
+        <h2 class="h2">모든 영업 정보를<br/>한 화면에서</h2>
+        <p class="lead muted">담당자 단위 + 회사 단위 이중 CRM 구조로, 영업 컨텍스트를 잃지 않습니다.</p>
+        <ul>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>이중 CRM 구조</b>
+              <span class="desc">담당자와 회사를 분리 관리, 인사이동에도 데이터 유지.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>영업 단계 태그</b>
+              <span class="desc">신규 / 진행중 / 성사 / 이탈을 한 번에 필터링.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>Notion 실시간 동기화</b>
+              <span class="desc">기존 Notion 워크스페이스를 그대로 백엔드로 활용.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>모바일에서도 동일</b>
+              <span class="desc">Android 앱에서 같은 데이터를 조회·편집.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="feature-visual reveal">
+        <div class="phone" style="margin: 0 auto;">
+          <img src="screenshots_final/app_02_sales.png" alt="앱 영업 관리 화면" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Feature 3: 대시보드 + Todo (light, with web shot) -->
+<section class="section">
+  <div class="wrap">
+    <div class="feature-row">
+      <div class="feature-copy reveal">
+        <span class="kicker"><span class="dot"></span>FEATURE 03 · DASHBOARD</span>
+        <h2 class="h2">오늘 해야 할 일,<br/>놓치지 마세요</h2>
+        <p class="lead">홈 화면에서 이번 달 매출, 신규 고객, 오늘의 Todo까지 — 영업 상황을 한눈에.</p>
+        <ul>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>홈 대시보드</b>
+              <span class="desc">매출 · 신규 고객 · Todo를 KPI 카드로 통합.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>AI 우선순위 정리</b>
+              <span class="desc">Todo 항목을 마감일·중요도 기준으로 자동 정렬.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>일별·주별 자동 생성</b>
+              <span class="desc">캘린더 일정을 보고 AI가 할 일 초안을 만들어 줍니다.</span>
+            </div>
+          </li>
+          <li>
+            <span class="msi msi--fill" style="font-size:22px;color:var(--web-accent);">check_circle</span>
+            <div>
+              <b>웹 + 앱 실시간 동기화</b>
+              <span class="desc">어디서 체크하든 5초 안에 반영됩니다.</span>
+            </div>
+          </li>
+        </ul>
+      </div>
+      <div class="feature-visual reveal">
+        <div class="web-shot web-shot--light">
+          <div class="browser-bar">
+            <div class="dots"><span></span><span></span><span></span></div>
+            <div class="url">auto-outbound-mail-system.onrender.com/home</div>
+          </div>
+          <img src="screenshots_final/web_home.png" alt="홈 대시보드" />
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- MOBILE                                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<section class="section section--dark" id="mobile">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center;">
+      <span class="kicker"><span class="dot"></span>ANDROID APP</span>
+      <h2 class="h2" style="margin-top:18px;">언제 어디서나 —<br/>주머니 속 영업 시스템</h2>
+      <p class="lead muted" style="margin-left:auto;margin-right:auto;">
+        Web과 100% 동일한 기능을, 다크 테마에 최적화된 모바일 UX로.
+      </p>
+    </div>
+
+    <div class="mobile-stage">
+      <div class="phone reveal">
+        <img src="screenshots_final/app_01_home.png" alt="앱 홈" />
+      </div>
+      <div class="mobile-feats reveal">
+        <div class="mobile-feat">
+          <div class="icon-wrap"><span class="msi msi--fill" style="font-size:22px;color:var(--d-accent);">bolt</span></div>
+          <div>
+            <h4>오프라인 친화 UI</h4>
+            <p>네트워크가 불안정해도 캐시로 빠르게 응답합니다.</p>
+          </div>
+        </div>
+        <div class="mobile-feat">
+          <div class="icon-wrap"><span class="msi msi--fill" style="font-size:22px;color:var(--d-accent);">verified_user</span></div>
+          <div>
+            <h4>다크 테마 최적화</h4>
+            <p>OLED 절전 + 야간 가독성까지 고려한 UI.</p>
+          </div>
+        </div>
+        <div class="mobile-feat">
+          <div class="icon-wrap"><span class="msi msi--fill" style="font-size:22px;color:var(--d-accent);">auto_awesome</span></div>
+          <div>
+            <h4>웹과 100% 동일</h4>
+            <p>편집한 내용이 즉시 웹에 반영, 컨텍스트 손실 없이 작업.</p>
+          </div>
+        </div>
+      </div>
+      <div class="phone reveal">
+        <img src="screenshots_final/app_02_sales.png" alt="앱 영업 관리" />
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- IMPACT                                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<section class="section" id="impact">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center;">
+      <span class="kicker"><span class="dot"></span>IMPACT</span>
+      <h2 class="h2" style="margin-top:18px;">도입하면 달라지는 것들</h2>
+    </div>
+
+    <div class="grid impact-grid">
+      <div class="card impact-card reveal">
+        <span class="msi icon-img" style="display:block;margin:0 auto 16px;color:var(--web-accent);">timer</span>
+        <div class="stat">70<span class="unit">%</span></div>
+        <div class="label">이메일 처리 시간 단축</div>
+      </div>
+      <div class="card impact-card reveal">
+        <span class="msi icon-img" style="display:block;margin:0 auto 16px;color:var(--web-accent);">verified_user</span>
+        <div class="stat">0<span class="unit">건</span></div>
+        <div class="label">고객 정보 누락 사고</div>
+      </div>
+      <div class="card impact-card reveal">
+        <span class="msi icon-img" style="display:block;margin:0 auto 16px;color:var(--web-accent);">bar_chart</span>
+        <div class="stat">90<span class="unit">%</span></div>
+        <div class="label">리포트 작성 시간 절감</div>
+      </div>
+    </div>
+
+    <p class="impact-quote reveal">
+      “<em>영업에만 집중할 수 있는 환경</em>을 만들어 드립니다.”
+    </p>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- TECH                                                                             -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<section class="section section--dark" id="tech">
+  <div class="wrap">
+    <div class="reveal" style="text-align:center;">
+      <span class="kicker"><span class="dot"></span>TECHNOLOGY</span>
+      <h2 class="h2" style="margin-top:18px;">안정적인 기술 기반</h2>
+      <p class="lead muted" style="margin-left:auto;margin-right:auto;">
+        검증된 스택과 운영 인프라 위에서 — 작은 팀도 안심하고 사용할 수 있습니다.
+      </p>
+    </div>
+
+    <div class="tech-split">
+      <div class="reveal">
+        <h3 class="h3" style="color:var(--d-text);">Tech Stack</h3>
+        <p class="muted" style="font-size:14px;margin-top:6px;">검증된 오픈소스와 클라우드 서비스를 조합.</p>
+        <div class="badge-cloud">
+          <span class="badge"><span class="pulse"></span>Python Flask</span>
+          <span class="badge"><span class="pulse"></span>Supabase</span>
+          <span class="badge"><span class="pulse"></span>Notion API</span>
+          <span class="badge"><span class="pulse"></span>Google Gemini AI</span>
+          <span class="badge"><span class="pulse"></span>Gmail API</span>
+          <span class="badge"><span class="pulse"></span>Flutter Android</span>
+          <span class="badge"><span class="pulse"></span>Render.com</span>
+          <span class="badge"><span class="pulse"></span>APScheduler</span>
+        </div>
+      </div>
+
+      <div class="reveal">
+        <h3 class="h3" style="color:var(--d-text);">Operations</h3>
+        <p class="muted" style="font-size:14px;margin-top:6px;">실서비스 수준의 운영 인프라.</p>
+        <div class="ops-grid">
+          <div class="ops-card">
+            <span class="msi" style="font-size:28px;color:var(--d-accent);">public</span>
+            <h4>24/7 클라우드 운영</h4>
+            <p>Render.com 자동 배포 · 모니터링</p>
+          </div>
+          <div class="ops-card">
+            <span class="msi msi--fill" style="font-size:28px;color:var(--d-accent);">bolt</span>
+            <h4>다층 캐시 최적화</h4>
+            <p>브라우저 → 서버 → DB 3단 캐시</p>
+          </div>
+          <div class="ops-card">
+            <span class="msi" style="font-size:28px;color:var(--d-accent);">verified_user</span>
+            <h4>멀티테넌트 보안</h4>
+            <p>사용자별 데이터 완전 격리</p>
+          </div>
+          <div class="ops-card">
+            <span class="msi" style="font-size:28px;color:var(--d-accent);">key</span>
+            <h4>암호화된 API 키 관리</h4>
+            <p>Supabase Vault 기반 비밀 관리</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- CTA                                                                              -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<section class="cta" id="cta">
+  <div class="wrap" style="position:relative;z-index:1;">
+    <div class="reveal" style="text-align:center;">
+      <span class="kicker"><span class="dot"></span>GET STARTED</span>
+      <h2 class="h1" style="margin-top:22px;">지금 바로 시작하세요</h2>
+      <p class="lead" style="margin-left:auto;margin-right:auto;">
+        무료 체험판을 신청하시면, 영업 자동화 시스템을 직접 경험해 보실 수 있습니다.
+      </p>
+    </div>
+
+    <div class="cta-cards reveal">
+      <a class="cta-card" href="https://auto-outbound-mail-system.onrender.com" target="_blank" rel="noopener">
+        <div class="icon-wrap"><span class="msi" style="font-size:22px;color:var(--d-accent);">public</span></div>
+        <div>
+          <span class="label">Service URL</span>
+          <span class="value">auto-outbound-mail-system.onrender.com</span>
+        </div>
+      </a>
+      <a class="cta-card" href="mailto:zmfltmaktm1225@gmail.com">
+        <div class="icon-wrap"><span class="msi" style="font-size:22px;color:var(--d-accent);">mail</span></div>
+        <div>
+          <span class="label">Contact</span>
+          <span class="value">zmfltmaktm1225@gmail.com</span>
+        </div>
+      </a>
+    </div>
+
+    <div style="margin-top:48px;">
+      <a class="btn btn--primary" href="https://auto-outbound-mail-system.onrender.com" target="_blank" rel="noopener" style="font-size:16px;padding:16px 28px;">
+        무료 체험 시작하기 →
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<!-- FOOTER                                                                           -->
+<!-- ═══════════════════════════════════════════════════════════════════════════════ -->
+<footer class="foot">
+  <div class="wrap foot-inner">
+    <div class="brand">
+      <img src="icons/app-launcher-clean.png" alt="" style="width:24px;height:24px;border-radius:6px;background:#fff;" />
+      <div class="word">Aut<span class="accent" style="color:var(--d-accent);">oo</span>utbound</div>
+    </div>
+    <div>© 2026 Autooutbound · Outbound Mail Suite v1.7</div>
+  </div>
+</footer>
+
+<script>
+  // Reveal on scroll — light & non-blocking
+  (function () {
+    if (typeof IntersectionObserver === "undefined") {
+      document.querySelectorAll(".reveal").forEach(function (el) { el.classList.add("is-in"); });
+      return;
+    }
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          e.target.classList.add("is-in");
+          io.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.12 });
+    document.querySelectorAll(".reveal").forEach(function (el) { io.observe(el); });
+  })();
+</script>
+
+</body>
+</html>

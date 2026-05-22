@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Indigo rounded square background — clean, no bottom artifacts -->
+  <rect width="200" height="200" rx="44" fill="#5B57E0"/>
+
+  <!-- Dark card -->
+  <rect x="30" y="68" width="130" height="88" rx="14" fill="#1a1740" opacity="0.75"/>
+
+  <!-- Person icon: head -->
+  <circle cx="72" cy="97" r="13" fill="#9B97F0"/>
+  <!-- Person icon: shoulders -->
+  <path d="M46 134 Q46 116 72 116 Q98 116 98 134" fill="#9B97F0"/>
+
+  <!-- Name lines -->
+  <rect x="108" y="96" width="40" height="7" rx="3.5" fill="#9B97F0" opacity="0.85"/>
+  <rect x="108" y="111" width="30" height="6" rx="3" fill="#9B97F0" opacity="0.5"/>
+
+  <!-- Orange paper plane — top right of card -->
+  <polygon points="138,52  170,66  138,80" fill="#FF6B35"/>
+  <polygon points="138,66  170,66  156,80" fill="#CC4F1E"/>
+</svg>

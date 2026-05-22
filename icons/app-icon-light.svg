@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="120" height="120">
+  <!-- White rounded background -->
+  <rect width="120" height="120" rx="26" fill="#FFFFFF"/>
+
+  <!-- Subtle drop shadow effect via filter -->
+  <defs>
+    <filter id="card-shadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#4F46E5" flood-opacity="0.12"/>
+    </filter>
+  </defs>
+
+  <!-- Business card shape -->
+  <rect x="18" y="34" width="76" height="52" rx="8" fill="#4F46E5" filter="url(#card-shadow)"/>
+  <!-- Card inner white face -->
+  <rect x="20" y="36" width="72" height="48" rx="7" fill="#EEF2FF"/>
+
+  <!-- Person silhouette (head) -->
+  <circle cx="42" cy="52" r="8" fill="#4F46E5"/>
+  <!-- Person silhouette (shoulders arc) -->
+  <path d="M28 70 Q28 58 42 58 Q56 58 56 70" fill="#4F46E5"/>
+
+  <!-- Name lines -->
+  <rect x="61" y="50" width="24" height="4" rx="2" fill="#6366F1" opacity="0.7"/>
+  <rect x="61" y="58" width="18" height="3" rx="1.5" fill="#6366F1" opacity="0.45"/>
+  <rect x="61" y="64" width="20" height="3" rx="1.5" fill="#6366F1" opacity="0.3"/>
+
+  <!-- Paper plane — top right corner, orange -->
+  <g transform="translate(72, 22) rotate(-20)">
+    <polygon points="0,0 22,8 0,16" fill="#FF6B35"/>
+    <polygon points="0,8 22,8 12,16" fill="#E85520"/>
+    <!-- Fold line -->
+    <line x1="0" y1="8" x2="22" y2="8" stroke="#FF6B35" stroke-width="0.5" opacity="0.4"/>
+  </g>
+</svg>
