@@ -1,10 +1,17 @@
-<!doctype html>
+﻿<!doctype html>
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
 <title>Autooutbound — 영업 자동화 시스템 · Service Introduction</title>
 <meta name="description" content="AI 기반 이메일 요약 · 영업/고객 관리 · 자동 리포트. Web + Android 앱으로 영업의 모든 흐름을 자동화합니다." />
+<meta property="og:title" content="Autooutbound — AI 영업 자동화 시스템" />
+<meta property="og:description" content="AI 기반 이메일 요약 · 영업/고객 관리 · 자동 리포트. Web + Android 앱으로 영업의 모든 흐름을 자동화합니다." />
+<meta property="og:image" content="https://ryan-manhattan.github.io/autooutbound-intro/screenshots_final/web_home.png" />
+<meta property="og:url" content="https://ryan-manhattan.github.io/autooutbound-intro/" />
+<meta property="og:type" content="website" />
+<meta name="twitter:card" content="summary_large_image" />
+<link rel="icon" type="image/png" href="icons/app-launcher-clean.png" />
 
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -462,8 +469,7 @@
   .cta .lead { margin: 20px auto 0; color: rgba(255,255,255,0.72); }
   .cta-cards {
     margin-top: 48px;
-    display: grid; grid-template-columns: 1fr 1fr; gap: 18px;
-    max-width: 760px; margin-left: auto; margin-right: auto;
+    display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; max-width: 960px; margin-left: auto; margin-right: auto;
   }
   .cta-card {
     padding: 24px;
@@ -495,6 +501,12 @@
   /* ── Subtle entrance ───────────────────────────────────────────────────────────── */
   .reveal { opacity: 0; transform: translateY(16px); transition: opacity .7s ease, transform .7s ease; }
   .reveal.is-in { opacity: 1; transform: none; }
+  
+  /* ── Stagger animation for grouped cards ───────────────────────────────────── */
+  .reveal-stagger > .reveal:nth-child(1) { transition-delay: 0ms; }
+  .reveal-stagger > .reveal:nth-child(2) { transition-delay: 120ms; }
+  .reveal-stagger > .reveal:nth-child(3) { transition-delay: 240ms; }
+  .reveal-stagger > .reveal:nth-child(4) { transition-delay: 360ms; }
   @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
 
   /* ── Print (PDF export friendly) ───────────────────────────────────────────────── */
@@ -603,7 +615,7 @@
       <p class="lead">매일 반복되는 영업 업무가 진짜 영업할 시간을 빼앗고 있습니다.</p>
     </div>
 
-    <div class="grid pain-grid">
+    <div class="grid pain-grid reveal-stagger">
       <div class="card pain-card reveal">
         <span class="msi icon-img" style="color:var(--web-accent);">mail</span>
         <div class="num">01 — INBOX OVERLOAD</div>
@@ -639,7 +651,7 @@
       </p>
     </div>
 
-    <div class="grid sol-grid">
+    <div class="grid sol-grid reveal-stagger">
       <div class="card sol-card reveal">
         <div class="num-pill">01</div>
         <span class="msi icon-img" style="color:var(--d-accent);">mail</span>
@@ -897,7 +909,7 @@
       <h2 class="h2" style="margin-top:18px;">도입하면 달라지는 것들</h2>
     </div>
 
-    <div class="grid impact-grid">
+    <div class="grid impact-grid reveal-stagger">
       <div class="card impact-card reveal">
         <span class="msi icon-img" style="display:block;margin:0 auto 16px;color:var(--web-accent);">timer</span>
         <div class="stat">70<span class="unit">%</span></div>
@@ -1001,6 +1013,13 @@
           <span class="value">auto-outbound-mail-system.onrender.com</span>
         </div>
       </a>
+            <a class="cta-card" href="https://github.com/Ryan-manhattan/autooutbound-intro/releases" target="_blank" rel="noopener">
+        <div class="icon-wrap"><span class="msi" style="font-size:22px;color:var(--d-accent);">android</span></div>
+        <div>
+          <span class="label">Android App</span>
+          <span class="value">APK 다운로드 →</span>
+        </div>
+      </a>
       <a class="cta-card" href="mailto:zmfltmaktm1225@gmail.com">
         <div class="icon-wrap"><span class="msi" style="font-size:22px;color:var(--d-accent);">mail</span></div>
         <div>
@@ -1015,6 +1034,7 @@
         무료 체험 시작하기 →
       </a>
     </div>
+    <p style="margin-top:12px;font-size:12px;color:rgba(255,255,255,0.4);font-family:var(--mono);">* 무료 서버 사용 중이라 첫 접속 시 30초~1분 로딩될 수 있습니다.</p>
   </div>
 </section>
 
