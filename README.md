@@ -1,4 +1,4 @@
-﻿# Autooutbound — 영업 자동화 시스템
+# Autooutbound — 영업 자동화 시스템
 
 > AI 기반 이메일 요약 · 영업/고객 관리 · 자동 리포트  
 > Web + Android 앱으로 영업의 모든 흐름을 자동화합니다.
@@ -38,12 +38,12 @@
 ## 스크린샷
 
 ### Web Dashboard
-![Web Home](./screenshots/web_home.png)
+![Web Home](./screenshots_final/web_home.png)
 
 ### App Screens
 | Home | Sales | Automation | Detail |
 |------|-------|------------|--------|
-| ![](./screenshots/app_01_home.png) | ![](./screenshots/app_02_sales.png) | ![](./screenshots/app_03_automation.png) | ![](./screenshots/app_04_detail.png) |
+| ![](./screenshots_final/app_01_home.png) | ![](./screenshots_final/app_02_sales.png) | ![](./screenshots_final/app_03_automation.png) | ![](./screenshots_final/app_04_detail.png) |
 
 ---
 
